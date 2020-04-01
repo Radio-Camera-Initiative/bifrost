@@ -41,7 +41,7 @@ cf32: 32+32-bit complex floating point
 
 """
 
-from libbifrost import _bf
+from .libbifrost import _bf
 import numpy as np
 
 def split_name_nbit(dtype_str):

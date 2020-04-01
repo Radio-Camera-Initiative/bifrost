@@ -25,14 +25,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from libbifrost import _bf, _check, _get, _string2space
-from ndarray import asarray
+from .libbifrost import _bf, _check, _get, _string2space
+from .ndarray import asarray
 
 import ctypes
 
 def transpose(dst, src, axes=None):
     if axes is None:
-        axes = reversed(range(len(dst.shape)))
+        axes = reversed(list(range(len(dst.shape))))
     dst_bf = asarray(dst).as_BFarray()
     src_bf = asarray(src).as_BFarray()
     array_type = ctypes.c_int * src.ndim

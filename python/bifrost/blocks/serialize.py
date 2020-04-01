@@ -25,8 +25,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, print_function
+
 import sys
+from functools import reduce
 if sys.version_info > (3,):
     xrange = range
     
@@ -53,7 +54,7 @@ class BifrostReader(object):
             self.header = json.load(hdr_file)
         data_filenames = glob.glob(basename + '.*.dat')
         inds = [_parse_bifrost_filename(fname) for fname in data_filenames]
-        frame0s, ringlet_inds = zip(*inds)
+        frame0s, ringlet_inds = list(zip(*inds))
         nringlets = [max(r) + 1 for r in zip(*ringlet_inds)]
         # TODO: Support multiple ringlet axes (needed in SerializeBlock too)
         assert(len(nringlets) <= 1)
@@ -61,7 +62,7 @@ class BifrostReader(object):
         if self.nringlet > 0:
             ringlet_inds = [inds[0] for inds in ringlet_inds]
             self.ringlet_files = []
-            for ringlet in xrange(self.nringlet):
+            for ringlet in range(self.nringlet):
                 ringlet_filenames = [f for f, r in zip(data_filenames, ringlet_inds)
                                      if r == ringlet]
                 ringlet_filenames.sort()
@@ -190,7 +191,7 @@ class SerializeBlock(SinkBlock):
             ndigit    = len(str(self.nringlet-1))
             filenames = [self.basename + ('.bf.%012i.%0'+str(ndigit)+'i.dat') %
                          (frame_offset, i)
-                         for i in xrange(self.nringlet)]
+                         for i in range(self.nringlet)]
         else:
             # TODO: Need to deal with separating multiple ringlet axes
             #         E.g., separate each ringlet dim with a dot
@@ -232,7 +233,7 @@ class SerializeBlock(SinkBlock):
         if self.nringlet == 1:
             ispan.data.tofile(self.ofiles[0])
         else:
-            for r in xrange(self.nringlet):
+            for r in range(self.nringlet):
                 ispan.data[r].tofile(self.ofiles[r])
 
 def serialize(iring, path=None, max_file_size=None, *args, **kwargs):

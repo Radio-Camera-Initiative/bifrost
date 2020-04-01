@@ -25,18 +25,18 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from libbifrost import _bf, _check, _get, _array
+from .libbifrost import _bf, _check, _get, _array
 import bifrost as bf
 import numpy as np
 import ctypes
 
 def _is_literal(x):
-    return isinstance(x, (int, long, float, complex))
+    return isinstance(x, (int, float, complex))
 
 def _convert_to_array(arg):
     if _is_literal(arg):
         arr = np.array(arg)
-        if isinstance(arg, (int, long)) and -(1 << 31) <= arg < (1 << 31):
+        if isinstance(arg, int) and -(1 << 31) <= arg < (1 << 31):
             arr = arr.astype(np.int32)
         # TODO: Any way to decide when these should be double-precision?
         elif isinstance(arg, float):
@@ -105,14 +105,14 @@ def map(func_string, data, axis_names=None, shape=None,
     arg_names = []
     if block_axes is not None:
         # Allow referencing axes by name
-        block_axes = [axis_names.index(bax) if isinstance(bax, basestring)
+        block_axes = [axis_names.index(bax) if isinstance(bax, str)
                       else bax
                       for bax in block_axes]
     if block_axes is not None and len(block_axes) != 2:
         raise ValueError("block_axes must contain exactly 2 entries")
     if block_shape is not None and len(block_shape) != 2:
         raise ValueError("block_shape must contain exactly 2 entries")
-    for key, arg in data.items():
+    for key, arg in list(data.items()):
         arg = _convert_to_array(arg)
         # Note: We must keep a reference to each array lest they be garbage
         #         collected before their corresponding BFarray is used.

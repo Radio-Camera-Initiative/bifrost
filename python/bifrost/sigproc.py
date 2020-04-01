@@ -52,7 +52,7 @@ period:        <delete>
 data:          [time][pol][nbit] (General case: [time][if/pol][chan][nbit])
 """
 
-from __future__ import print_function
+
 
 import struct
 import numpy as np
@@ -155,7 +155,7 @@ def _header_read_one_parameter(file_object):
 def _write_header(hdr, file_object):
     """write the entire header to the current position of a file"""
     _header_write_string(file_object, "HEADER_START")
-    for key, val in hdr.items():
+    for key, val in list(hdr.items()):
         if key in _STRING_VALUES:
             _header_write_string(file_object, key)
             _header_write_string(file_object, val)

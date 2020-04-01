@@ -35,7 +35,7 @@
 #  E.g., _bf.bfRingSequenceGetName(<BFspan>) [should be <BFsequence>]
 
 import ctypes
-import libbifrost_generated as _bf
+from . import libbifrost_generated as _bf
 bf = _bf # Public access to library
 
 # Internal helpers below
@@ -78,7 +78,7 @@ def _array(size_or_vals, dtype=None):
                 dtype = ctypes.c_int
             elif isinstance(vals[0], float):
                 dtype = ctypes.c_double
-            elif isinstance(vals[0], basestring):
+            elif isinstance(vals[0], str):
                 dtype = ctypes.c_char_p
             elif isinstance(vals[0], _bf.BFarray):
                 dtype = ctypes.POINTER(_bf.BFarray)
@@ -151,7 +151,7 @@ STRING2SPACE = {'auto':         _bf.BF_SPACE_AUTO,
 def _string2space(s):
     if s not in STRING2SPACE:
         raise KeyError("Invalid space '" + str(s) +
-                       "'.\nValid spaces: " + str(LUT.keys()))
+                       "'.\nValid spaces: " + str(list(LUT.keys())))
     return STRING2SPACE[s]
 
 SPACE2STRING = {_bf.BF_SPACE_AUTO:         'auto',

@@ -42,11 +42,11 @@ if sys.version_info > (3,):
     
 import ctypes
 import numpy as np
-from memory import raw_malloc, raw_free, raw_get_space, space_accessible
+from .memory import raw_malloc, raw_free, raw_get_space, space_accessible
 from bifrost.libbifrost import _bf, _check
-import device
-from DataType import DataType
-from Space import Space
+from . import device
+from .DataType import DataType
+from .Space import Space
 import sys
 
 # TODO: The stuff here makes array.py redundant (and outdated)
@@ -292,13 +292,13 @@ class ndarray(np.ndarray):
             a.ndim = 1
             a.shape[0] = 1
             a.strides[0] = self.bf.dtype.itemsize
-        for d in xrange(len(self.shape)):
+        for d in range(len(self.shape)):
             a.shape[d] = self.shape[d]
         # HACK TESTING support for 'packed' arrays
         itemsize_bits = self.bf.dtype.itemsize_bits
         if itemsize_bits < 8:
             a.shape[a.ndim - 1] *= 8 // itemsize_bits
-        for d in xrange(len(self.strides)):
+        for d in range(len(self.strides)):
             a.strides[d] = self.strides[d]
         a.big_endian = not self.bf.native
         a.conjugated = self.bf.conjugated

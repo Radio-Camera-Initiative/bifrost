@@ -42,7 +42,7 @@ import sys
 if sys.version_info > (3,):
     xrange = range
     
-from libbifrost import _bf
+from .libbifrost import _bf
 import numpy as np
 
 # Custom dtypes to represent additional complex types
@@ -104,15 +104,15 @@ def is_vector_structure(dtype):
     if dtype.names is None:
         return False
     ndim = len(dtype.names)
-    vector_field_names = tuple('f%i' % i for i in xrange(ndim))
+    vector_field_names = tuple('f%i' % i for i in range(ndim))
     return (dtype.kind == 'V' and
             dtype.names == vector_field_names and
-            all([dtype[i] == dtype[0] for i in xrange(1, ndim)]))
+            all([dtype[i] == dtype[0] for i in range(1, ndim)]))
 
 class DataType(object):
     # Note: Default of None results in default Numpy type (np.float)
     def __init__(self, t=None):
-        if isinstance(t, basestring):
+        if isinstance(t, str):
             for i, char in enumerate(t):
                 if char.isdigit():
                     break

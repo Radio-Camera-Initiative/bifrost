@@ -29,16 +29,17 @@
 # TODO: Some of this code has gotten a bit hacky
 #         Also consider merging some of the logic into the backend
 
-from __future__ import print_function
 
-from libbifrost import _bf, _check, _get, BifrostObject, _string2space, _space2string
-from DataType import DataType
-from ndarray import ndarray, _address_as_buffer
+
+from .libbifrost import _bf, _check, _get, BifrostObject, _string2space, _space2string
+from .DataType import DataType
+from .ndarray import ndarray, _address_as_buffer
 from copy import copy, deepcopy
 
 import ctypes
 import string
 import numpy as np
+from functools import reduce
 
 try:
     import simplejson as json

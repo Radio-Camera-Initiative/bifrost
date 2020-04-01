@@ -30,7 +30,7 @@ A simple block that accepts 1 frame at a time and accumulates them
 nframe times before outputting the accumulated result.
 """
 
-from __future__ import absolute_import
+
 
 import bifrost as bf
 from bifrost.pipeline import TransformBlock

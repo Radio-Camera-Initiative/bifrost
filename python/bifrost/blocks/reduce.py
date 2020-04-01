@@ -28,7 +28,7 @@
 # TODO: Consider merging with detect_block
 #         Seems easy, but may end up somewhat complicated
 
-from __future__ import absolute_import
+
 
 from bifrost.pipeline import TransformBlock
 import bifrost as bf
@@ -51,7 +51,7 @@ class ReduceBlock(TransformBlock):
         otensor['dtype'] = 'f32'
         if itensor['dtype'] == 'cf32' and not self.op.startswith('pwr'):
             otensor['dtype'] = 'cf32'
-        if 'labels' in itensor and isinstance(self.specified_axis, basestring):
+        if 'labels' in itensor and isinstance(self.specified_axis, str):
             # Look up axis by label
             self.axis = itensor['labels'].index(self.specified_axis)
         else:

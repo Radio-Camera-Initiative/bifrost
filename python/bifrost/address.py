@@ -25,14 +25,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from libbifrost import _bf, _check, _get, BifrostObject
+from .libbifrost import _bf, _check, _get, BifrostObject
 
 import ctypes
 from socket import AF_UNSPEC
 
 class Address(BifrostObject):
     def __init__(self, address, port, family=None):
-        assert(isinstance(port, (int, long)))
+        assert(isinstance(port, int))
         if family is None:
             family = AF_UNSPEC
         BifrostObject.__init__(

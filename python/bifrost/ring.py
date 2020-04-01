@@ -27,12 +27,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import print_function
 
-from libbifrost import _bf, _check, _get, BifrostObject, _string2space, _space2string
+
+from .libbifrost import _bf, _check, _get, BifrostObject, _string2space, _space2string
 #from GPUArray import GPUArray
-from DataType import DataType
-from ndarray import ndarray, _address_as_buffer
+from .DataType import DataType
+from .ndarray import ndarray, _address_as_buffer
 
 import ctypes
 import string

@@ -32,18 +32,18 @@ Bifrost pipeline processing library
 
 # TODO: Decide how to organise the namespace
 
-from __future__ import print_function
 
-import core, memory, affinity, ring, block, address, udp_socket
-import pipeline
-import device
-from ndarray import ndarray, asarray, empty_like, empty, zeros_like, zeros
-import views
-from map import map
-from pipeline import Pipeline, get_default_pipeline, block_scope
-import blocks
-from block_chainer import BlockChainer
-from reduce import reduce
+
+from . import core, memory, affinity, ring, block, address, udp_socket
+from . import pipeline
+from . import device
+from .ndarray import ndarray, asarray, empty_like, empty, zeros_like, zeros
+from . import views
+from .map import map
+from .pipeline import Pipeline, get_default_pipeline, block_scope
+from . import blocks
+from .block_chainer import BlockChainer
+from .reduce import reduce
 # import copy_block, transpose_block, scrunch_block, sigproc_block, fdmt_block
 # from transpose import transpose
 # from unpack import unpack

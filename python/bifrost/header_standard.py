@@ -61,7 +61,7 @@ def enforce_header_standard(header_dict):
         does not fit the standard specified above."""
     if type(header_dict) != dict:
         return False
-    for parameter, standard in STANDARD_HEADER.items():
+    for parameter, standard in list(STANDARD_HEADER.items()):
         if parameter not in header_dict:
             return False
         if type(header_dict[parameter]) != standard[0]:

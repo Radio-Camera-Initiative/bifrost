@@ -53,7 +53,7 @@ data:          [time][pol][nbit] (General case: [time][if/pol][chan][nbit])
 # See here for details of the different data formats:
 #   https://github.com/SixByNine/sigproc
 
-from __future__ import print_function
+
 
 import struct
 import numpy as np
@@ -134,12 +134,12 @@ def id2telescope(id_):
     return _telescopes[id_]
 def telescope2id(name):
     # TODO: Would be better to use a pre-made reverse lookup dict
-    return _telescopes.keys()[_telescopes.values().index(name)]
+    return list(_telescopes.keys())[list(_telescopes.values()).index(name)]
 def id2machine(id_):
     return _machines[id_]
 def machine2id(name):
     # TODO: Would be better to use a pre-made reverse lookup dict
-    return _machines.keys()[_machines.values().index(name)]
+    return list(_machines.keys())[list(_machines.values()).index(name)]
 
 def _header_write_string(f, key):
     f.write(struct.pack('=i', len(key)))
@@ -167,7 +167,7 @@ def _header_read(f):
 
 def write_header(hdr, f):
     _header_write_string(f, "HEADER_START")
-    for key, val in hdr.items():
+    for key, val in list(hdr.items()):
         if val is None:
             # Do not write keys with no value
             continue
@@ -378,7 +378,7 @@ class SigprocFile(object):
         m = hmod['machine_id']
         hmod['machine_id']   = "%i (%s)" % (m, _machines[m])
         return '\n'.join(['% 16s: %s' % (key, val)
-                          for (key, val) in hmod.items()])
+                          for (key, val) in list(hmod.items())])
     def __getitem__(self, key):
         if isinstance(key, type("")): # Header key lookup
             return self.header[key]

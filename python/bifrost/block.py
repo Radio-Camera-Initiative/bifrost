@@ -30,7 +30,7 @@ Right now the only possible block type is one
 of a simple transform which works on a span by span basis.
 """
 
-from __future__ import print_function
+
 import sys
 if sys.version_info > (3,):
     xrange = range
@@ -276,7 +276,7 @@ class MultiTransformBlock(object):
         into a single list generator"""
         iterators = [iter(iterable) for iterable in iterables]
         while True:
-            next_set = [iterator.next() for iterator in iterators]
+            next_set = [next(iterator) for iterator in iterators]
             yield self.flatten(*next_set)
     def load_settings(self):
         """Set by user to interpret input rings"""
@@ -453,7 +453,7 @@ class WriteHeaderBlock(SinkBlock):
         @param[in] input_ring Contains the header in question"""
         self.gulp_size = 1
         span_dummy_generator = self.iterate_ring_read(input_ring)
-        span_dummy_generator.next()
+        next(span_dummy_generator)
 class FFTBlock(TransformBlock):
     """Performs complex to complex 1D FFT on input ring data"""
     def __init__(self, gulp_size):
@@ -491,7 +491,7 @@ class FFTBlock(TransformBlock):
         data_accumulate = data_accumulate.astype(np.complex64)
         self.out_gulp_size = data_accumulate.nbytes
         outspan_generator = self.iterate_ring_write(output_rings[0])
-        ospan = outspan_generator.next()
+        ospan = next(outspan_generator)
         result = np.fft.fft(data_accumulate).astype(np.complex64)
         ospan.data_view(np.complex64)[0] = result.ravel()
 class IFFTBlock(TransformBlock):
@@ -531,7 +531,7 @@ class IFFTBlock(TransformBlock):
         data_accumulate = data_accumulate.astype(np.complex64)
         self.out_gulp_size = data_accumulate.nbytes
         outspan_generator = self.iterate_ring_write(output_rings[0])
-        ospan = outspan_generator.next()
+        ospan = next(outspan_generator)
         result = np.fft.ifft(data_accumulate)
         ospan.data_view(np.complex64)[0][:] = result[:]
 class WriteAsciiBlock(SinkBlock):
@@ -672,7 +672,7 @@ class KurtosisBlock(TransformBlock):
             # i.e. the beamformer values in a channel
             number_samples = power.shape[0]
             bad_channels = []
-            for chan in xrange(self.nchan):
+            for chan in range(self.nchan):
                 nita_s1 = np.sum(power[:, chan])
                 nita_s2 = np.sum(power[:, chan]**2)
                 # equation 21
@@ -681,7 +681,7 @@ class KurtosisBlock(TransformBlock):
                 if abs(expected_v2 - nita_v2) > 0.1:
                     bad_channels.append(chan)
             flag_power = power.copy()
-            for chan in xrange(self.nchan):
+            for chan in range(self.nchan):
                 if chan in bad_channels:
                     # TODO: bf.ndarray.__setitem__ doesn't support scalar assignment (or broadcasting and/or type conversion in general)
                     # flag_power[:, chan] = 0    # set bad channel to zero
@@ -782,7 +782,7 @@ class FoldBlock(TransformBlock):
             if tstart is None:
                 tstart = self.data_settings['tstart']
             frequency = self.data_settings['fch1']
-            for chan in xrange(nchans):
+            for chan in range(nchans):
                 modified_tstart = tstart - self.calculate_delay(
                     frequency,
                     self.data_settings['fch1'])
@@ -801,7 +801,7 @@ class FoldBlock(TransformBlock):
                        self.gulp_size * 8 / self.data_settings['nbit'] / nchans)
         self.out_gulp_size = self.bins * 4
         out_span_generator = self.iterate_ring_write(output_rings[0])
-        out_span = out_span_generator.next()
+        out_span = next(out_span_generator)
         bifrost.memory.memcpy(
             out_span.data_view(dtype=np.float32),
             histogram)
@@ -909,8 +909,8 @@ class NumpyBlock(MultiTransformBlock):
             @param[in] outputs The number of output rings and the number of output
                 numpy arrays from the function."""
         super(NumpyBlock, self).__init__()
-        self.inputs = ['in_%d' % (i + 1) for i in xrange(inputs)]
-        self.outputs = ['out_%d' % (i + 1) for i in xrange(outputs)]
+        self.inputs = ['in_%d' % (i + 1) for i in range(inputs)]
+        self.outputs = ['out_%d' % (i + 1) for i in range(outputs)]
         self.ring_names = {}
         self.create_ring_names()
         self.function = function
@@ -993,8 +993,8 @@ class NumpyBlock(MultiTransformBlock):
                 if self.did_header_change(old_header):
                     self.trigger_sequence = True
 
-                outspans = outspan_generator.next()
-                for i in xrange(number_outputs):
+                outspans = next(outspan_generator)
+                for i in range(number_outputs):
                     outspans[i][:] = output_arrays[i].ravel()
 
 class NumpySourceBlock(MultiTransformBlock):
@@ -1009,7 +1009,7 @@ class NumpySourceBlock(MultiTransformBlock):
                 equal to the number of outgoing rings attached to this block.
             @param[in] changing Whether or not the arrays will be different in shape"""
         super(NumpySourceBlock, self).__init__()
-        outputs = ['out_%d' % (i + 1) for i in xrange(outputs)]
+        outputs = ['out_%d' % (i + 1) for i in range(outputs)]
         self.ring_names = {}
         for output_name in outputs:
             ring_description = "Output number " + output_name[4:]
@@ -1023,7 +1023,7 @@ class NumpySourceBlock(MultiTransformBlock):
     def calculate_output_settings(self, arrays):
         """Calculate the outgoing header settings based on the output arrays
             @param[in] arrays The arrays outputted by self.generator"""
-        for index in xrange(len(self.ring_names)):
+        for index in range(len(self.ring_names)):
             assert isinstance(arrays[index], np.ndarray)
             ring_name = 'out_%d' % (index + 1)
             self.header[ring_name] = {
@@ -1046,7 +1046,7 @@ class NumpySourceBlock(MultiTransformBlock):
 
     def main(self):
         """Call self.generator and output the arrays into the output"""
-        output_data = self.generator.next()
+        output_data = next(self.generator)
 
         if self.grab_headers:
             arrays = output_data[0::2]
@@ -1060,13 +1060,13 @@ class NumpySourceBlock(MultiTransformBlock):
         if self.grab_headers:
             self.load_user_headers(headers, arrays)
 
-        for outspans in self.write(*['out_%d' % (i + 1) for i in xrange(len(self.ring_names))]):
-            for i in xrange(len(self.ring_names)):
+        for outspans in self.write(*['out_%d' % (i + 1) for i in range(len(self.ring_names))]):
+            for i in range(len(self.ring_names)):
                 dtype = self.header['out_%d' % (i + 1)]['dtype']
                 outspans[i][:] = arrays[i].astype(np.dtype(dtype).type).ravel()
 
             try:
-                output_data = self.generator.next()
+                output_data = next(self.generator)
 
                 if self.grab_headers:
                     arrays = output_data[0::2]

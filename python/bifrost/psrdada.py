@@ -39,7 +39,7 @@ lib_LTLIBRARIES = libpsrdada.la
 libtest_la_LDFLAGS = -version-info 0:0:0
 """
 
-from __future__ import absolute_import, print_function
+
 
 from bifrost.pipeline import SourceBlock, SinkBlock
 from bifrost.DataType import DataType
@@ -112,7 +112,7 @@ class IpcBaseBuf(object):
             raise IOError("Failed to reset buffer")
     def __iter__(self):
         return self
-    def next(self):
+    def __next__(self):
         block = IpcBufBlock(self, self.mutable)
         if block.nbyte > 0:
             return block

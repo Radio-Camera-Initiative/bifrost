@@ -27,7 +27,7 @@
 
 # **TODO: Write tests for this class
 
-from libbifrost import _bf, _check, _get, BifrostObject
+from .libbifrost import _bf, _check, _get, BifrostObject
 
 class UDPSocket(BifrostObject):
     def __init__(self):

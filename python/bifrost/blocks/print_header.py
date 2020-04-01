@@ -24,7 +24,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import
+
 import pprint
 
 from bifrost.pipeline import SinkBlock
@@ -43,7 +43,7 @@ class PrintHeaderBlock(SinkBlock):
         ihdr = iseq.header
         with PrintHeaderBlock.lock:
             print("-----")
-            print("Block", self.iring.owner.name, ihdr['name'])
+            print(("Block", self.iring.owner.name, ihdr['name']))
             pprint.pprint(ihdr)
             print("-----")
     def on_sequence_end(self, iseq):

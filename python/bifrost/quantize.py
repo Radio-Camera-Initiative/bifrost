@@ -25,9 +25,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from libbifrost import _bf, _check, _get
+from .libbifrost import _bf, _check, _get
 import ctypes
-from ndarray import asarray
+from .ndarray import asarray
 
 def quantize(src, dst, scale=1.):
     src_bf = asarray(src).as_BFarray()

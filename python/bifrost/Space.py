@@ -41,7 +41,7 @@ SPACEMAP_FROM_STR = {'auto':         _bf.BF_SPACE_AUTO,
 
 class Space(object):
     def __init__(self, s):
-        if isinstance(s, basestring):
+        if isinstance(s, str):
             if s not in set(['auto', 'system',
                              'cuda', 'cuda_host', 'cuda_managed']):
                 raise ValueError('Invalid space: %s' % s)
@@ -49,7 +49,7 @@ class Space(object):
         elif isinstance(s, _bf.BFspace) or isinstance(s, int):
             if s not in SPACEMAP_TO_STR:
                 raise KeyError("Invalid space: " + s +
-                               ". Valid spaces: " + str(SPACEMAP_TO_STR.keys()))
+                               ". Valid spaces: " + str(list(SPACEMAP_TO_STR.keys())))
             self._space = SPACEMAP_TO_STR[s]
         else:
             raise ValueError('%s is not a space' % s)

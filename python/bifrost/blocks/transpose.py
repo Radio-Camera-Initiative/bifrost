@@ -25,7 +25,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import
+
 
 from bifrost.pipeline import TransformBlock
 import bifrost as bf
@@ -55,7 +55,7 @@ class TransposeBlock(TransformBlock):
         # Allow axes to be specified by label
         if 'labels' in itensor:
             labels = itensor['labels']
-            self.axes = [labels.index(ax) if isinstance(ax, basestring)
+            self.axes = [labels.index(ax) if isinstance(ax, str)
                          else ax
                          for ax in self.specified_axes]
         else:

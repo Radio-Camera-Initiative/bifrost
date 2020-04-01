@@ -26,13 +26,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import print_function
+
 import sys
 if sys.version_info > (3,):
     xrange = range
     
 import threading
-import Queue
+import queue
 import time
 import signal
 from copy import copy
@@ -42,7 +42,7 @@ import traceback
 
 import bifrost as bf
 from bifrost.ring2 import Ring, ring_view
-from temp_storage import TempStorage
+from .temp_storage import TempStorage
 from bifrost.proclog import ProcLog
 from bifrost.ndarray import memset_array # TODO: This feels a bit hacky
 
@@ -53,7 +53,7 @@ bf.device.set_devices_no_spin_cpu()
 
 def izip(*iterables):
     while True:
-        yield [it.next() for it in iterables]
+        yield [next(it) for it in iterables]
 
 thread_local = threading.local()
 thread_local.pipeline_stack = []
@@ -218,7 +218,7 @@ class Pipeline(BlockScope):
         self.blocks = []
         self.shutdown_timeout = 5.
         self.all_blocks_finished_initializing_event = threading.Event()
-        self.block_init_queue = Queue.Queue()
+        self.block_init_queue = queue.Queue()
     def as_default(self):
         return PipelineContext(self)
     def synchronize_block_initializations(self):
@@ -513,7 +513,7 @@ class MultiTransformBlock(Block):
         self._seq_count = 0
         self.perf_proclog = ProcLog(self.name + "/perf")
         self.sequence_proclogs = [ProcLog(self.name + "/sequence%i" % i)
-                                  for i in xrange(len(self.irings))]
+                                  for i in range(len(self.irings))]
         self.out_proclog = ProcLog(self.name + "/out")
 
         rnames = {'nring': len(self.orings)}
@@ -522,7 +522,7 @@ class MultiTransformBlock(Block):
         self.out_proclog.update(rnames)
 
     def main(self, orings):
-        for iseqs in izip(*[iring.read(guarantee=self.guarantee)
+        for iseqs in zip(*[iring.read(guarantee=self.guarantee)
                             for iring in self.irings]):
             if self.shutdown_event.is_set():
                 break
@@ -567,7 +567,7 @@ class MultiTransformBlock(Block):
                 if self.shutdown_event.is_set():
                     break
                 prev_time = time.time()
-                for ispans in izip(*[iseq.read(igulp_nframe,
+                for ispans in zip(*[iseq.read(igulp_nframe,
                                                istride_nframe,
                                                iframe0)
                                     for (iseq, igulp_nframe, istride_nframe, iframe0)

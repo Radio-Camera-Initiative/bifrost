@@ -27,8 +27,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from libbifrost import _bf, _check, _get, BifrostObject, _string2space
-from ndarray import asarray, zeros
+from .libbifrost import _bf, _check, _get, BifrostObject, _string2space
+from .ndarray import asarray, zeros
 
 import ctypes
 import numpy as np

@@ -28,8 +28,8 @@
 
 import ctypes
 import numpy as np
-from memory import raw_malloc, raw_free, memset, memcpy, memcpy2D
-from libbifrost import _check, _string2space
+from .memory import raw_malloc, raw_free, memset, memcpy, memcpy2D
+from .libbifrost import _check, _string2space
 from bifrost.libbifrost import _bf
 from array import _array2bifrost
 

@@ -31,7 +31,7 @@
 # Ubuntu 16.04:
 #     sudo apt-get install portaudio19-dev
 
-from __future__ import print_function
+
 
 import ctypes
 import atexit
@@ -236,7 +236,7 @@ def get_device_count():
     return _lib.Pa_GetDeviceCount()
 
 if __name__ == "__main__":
-    import portaudio as audio
+    from . import portaudio as audio
     import numpy as np
     print("Found %i audio devices" % audio.get_device_count())
     with audio.open(nbits=16) as audio_stream:

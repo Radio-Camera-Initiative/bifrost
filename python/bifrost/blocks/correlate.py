@@ -25,7 +25,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import
+
 import sys
 if sys.version_info > (3,):
     xrange = range
@@ -61,7 +61,7 @@ class CorrelateBlock(TransformBlock):
                             stand_val, pol_val,
                             stand_val, pol_val]
         # Append subscripts to stand and pol axis labels
-        for i in xrange(2):
+        for i in range(2):
             otensor['labels'][2+i] += '_i'
             otensor['labels'][4+i] += '_j'
         # Update time scale

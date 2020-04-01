@@ -25,7 +25,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import
+
 import sys
 if sys.version_info > (3,):
     xrange = range
@@ -48,7 +48,7 @@ class ReverseBlock(TransformBlock):
         ihdr = iseq.header
         itensor = ihdr['_tensor']
         self.axes = [itensor['labels'].index(axis)
-                     if isinstance(axis, basestring)
+                     if isinstance(axis, str)
                      else axis
                      for axis in self.specified_axes]
         frame_axis = itensor['shape'].index(-1)
@@ -68,7 +68,7 @@ class ReverseBlock(TransformBlock):
         idata = ispan.data
         odata = ospan.data
         shape = idata.shape
-        ind_names = ['i%i' % i for i in xrange(idata.ndim)]
+        ind_names = ['i%i' % i for i in range(idata.ndim)]
         inds = list(ind_names)
         for ax in self.axes:
             inds[ax] = '-' + inds[ax]

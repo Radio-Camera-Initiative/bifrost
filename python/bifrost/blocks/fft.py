@@ -25,7 +25,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import
+
 
 from bifrost.pipeline import TransformBlock
 from bifrost.fft import Fft
@@ -73,7 +73,7 @@ class FftBlock(TransformBlock):
 
         # Get axis indices, allowing for lookup-by-label
         self.axes = [itensor['labels'].index(axis)
-                     if isinstance(axis, basestring)
+                     if isinstance(axis, str)
                      else axis
                      for axis in self.specified_axes]
 

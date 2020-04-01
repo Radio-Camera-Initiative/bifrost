@@ -24,9 +24,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from libbifrost import _bf, _check, _get, BifrostObject
+from .libbifrost import _bf, _check, _get, BifrostObject
 import ctypes
-from ndarray import asarray
+from .ndarray import asarray
 
 class Romein(BifrostObject):
     def __init__(self):
