@@ -46,9 +46,9 @@ try:
 except IOError:
     if 'clean' in sys.argv[1:]:
         sys.exit(0)
-    print "*************************************************************************"
-    print "Please run `make` from the root of the source tree to generate version.py"
-    print "*************************************************************************"
+    print("*************************************************************************")
+    print("Please run `make` from the root of the source tree to generate version.py")
+    print("*************************************************************************")
     raise
 
 # Build up a list of scripts to install
