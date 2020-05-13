@@ -36,9 +36,10 @@ TODO: Some calls result in segfault with space=cuda (e.g., __getitem__
 
 """
 
+# Python2 compatibility
 import sys
-if sys.version_info > (3,):
-    xrange = range
+if sys.version_info < (3,):
+    range = xrange
     
 import ctypes
 import numpy as np

@@ -1,5 +1,5 @@
 
-# Copyright (c) 2016, The Bifrost Authors. All rights reserved.
+# Copyright (c) 2016-2020, The Bifrost Authors. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -25,10 +25,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
+# Python2 compatibility
+from __future__ import absolute_import, print_function
 import sys
-if sys.version_info > (3,):
-    xrange = range
+if sys.version_info < (3,):
+    range = xrange
     
 from bifrost.pipeline import SourceBlock, SinkBlock
 import bifrost.sigproc2 as sigproc
@@ -167,7 +168,6 @@ class SigprocSinkBlock(SinkBlock):
     def on_sequence(self, iseq):
         ihdr = iseq.header
         itensor = ihdr['_tensor']
-        print("input tensor", itensor)
 
         axnames = list(itensor['labels'])
         shape   = list(itensor['shape'])
@@ -258,9 +258,6 @@ class SigprocSinkBlock(SinkBlock):
             sigproc_hdr['nchans'] = 1
             sigproc_hdr['nifs']   = shape[-2]
             sigproc_hdr['tstart'] = _unix2mjd(scales[-2][0])
-            print(axnames)
-            print(units, units[-2])
-            print(scales, scales[-2][1])
             sigproc_hdr['tsamp']  = convert_units(scales[-2][1], units[-2], 's')
             if 'cfreq' in ihdr and 'bw' in ihdr:
                 sigproc_hdr['fch1'] = convert_units(ihdr['cfreq'],

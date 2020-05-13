@@ -1,5 +1,5 @@
 
-# Copyright (c) 2016, The Bifrost Authors. All rights reserved.
+# Copyright (c) 2016-2020, The Bifrost Authors. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -25,10 +25,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
+# Python2 compatibility
+from __future__ import absolute_import
 import sys
-if sys.version_info > (3,):
-    xrange = range
+if sys.version_info < (3,):
+    range = xrange
     
 from bifrost.pipeline import SourceBlock, SinkBlock
 from bifrost.DataType import DataType
@@ -39,10 +40,10 @@ import os
 
 def wav_read_chunk_desc(f):
     id_, size, fmt = struct.unpack('<4sI4s', f.read(12))
-    return id_.decode(), size, fmt.decode()
+    return id_, size, fmt
 def wav_read_subchunk_desc(f):
     id_, size = struct.unpack('<4sI', f.read(8))
-    return id_.decode(), size
+    return id_, size
 def wav_read_subchunk_fmt(f, size):
     assert(size >= 16)
     packed = f.read(16)

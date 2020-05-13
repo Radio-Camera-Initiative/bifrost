@@ -1,5 +1,5 @@
 
-# Copyright (c) 2016, The Bifrost Authors. All rights reserved.
+# Copyright (c) 2016-2020, The Bifrost Authors. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -26,10 +26,12 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+# Python2 compatibility
+from __future__ import absolute_import, print_function
 import sys
+if sys.version_info < (3,):
+    range = xrange
 from functools import reduce
-if sys.version_info > (3,):
-    xrange = range
     
 from bifrost.pipeline import SinkBlock, SourceBlock
 import os
