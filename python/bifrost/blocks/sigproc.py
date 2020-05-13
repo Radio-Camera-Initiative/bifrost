@@ -167,6 +167,7 @@ class SigprocSinkBlock(SinkBlock):
     def on_sequence(self, iseq):
         ihdr = iseq.header
         itensor = ihdr['_tensor']
+        print("input tensor", itensor)
 
         axnames = list(itensor['labels'])
         shape   = list(itensor['shape'])
@@ -257,6 +258,9 @@ class SigprocSinkBlock(SinkBlock):
             sigproc_hdr['nchans'] = 1
             sigproc_hdr['nifs']   = shape[-2]
             sigproc_hdr['tstart'] = _unix2mjd(scales[-2][0])
+            print(axnames)
+            print(units, units[-2])
+            print(scales, scales[-2][1])
             sigproc_hdr['tsamp']  = convert_units(scales[-2][1], units[-2], 's')
             if 'cfreq' in ihdr and 'bw' in ihdr:
                 sigproc_hdr['fch1'] = convert_units(ihdr['cfreq'],

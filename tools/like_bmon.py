@@ -38,9 +38,9 @@ import socket
 import traceback
 from datetime import datetime
 try:
-    import cStringIO as StringIO
+    import io as StringIO
 except ImportError:
-    import StringIO
+    import io
 
 os.environ['VMA_TRACELEVEL'] = '0'
 from bifrost.proclog import load_by_pid
@@ -49,14 +49,14 @@ from bifrost.proclog import load_by_pid
 BIFROST_STATS_BASE_DIR = '/dev/shm/bifrost/'
 
 def usage(exitCode=None):
-    print """%s - Monitor the packets capture/transmit status of a 
+    print("""%s - Monitor the packets capture/transmit status of a 
 bifrost pipeline.
 
 Usage: %s [OPTIONS] pid
 
 Options:
 -h, --help                  Display this help information
-""" % (os.path.basename(__file__), os.path.basename(__file__))
+""" % (os.path.basename(__file__), os.path.basename(__file__)))
 
     if exitCode is not None:
         sys.exit(exitCode)
@@ -72,9 +72,9 @@ def parseOptions(args):
     # Read in and process the command line flags
     try:
         opts, args = getopt.getopt(args, "h", ["help",])
-    except getopt.GetoptError, err:
+    except getopt.GetoptError as err:
         # Print help information and exit:
-        print str(err) # will print something like "option -a not recognized"
+        print(str(err)) # will print something like "option -a not recognized"
         usage(exitCode=2)
 
     # Work through opts
@@ -107,7 +107,7 @@ def _getTransmitReceive():
         pid = int(os.path.basename(pidDir), 10)
         contents = load_by_pid(pid)
 
-        for block in contents.keys():
+        for block in list(contents.keys()):
             if block[:3] != 'udp':
                 continue
 
@@ -417,7 +417,7 @@ def main(args):
 
     except Exception as error:
         exc_type, exc_value, exc_traceback = sys.exc_info()
-        fileObject = StringIO.StringIO()
+        fileObject = io.StringIO()
         traceback.print_tb(exc_traceback, file=fileObject)
         tbString = fileObject.getvalue()
         fileObject.close()
@@ -428,9 +428,9 @@ def main(args):
     curses.endwin()
 
     try:
-        print "%s: failed with %s at line %i" % (os.path.basename(__file__), str(error), traceback.tb_lineno(exc_traceback))
+        print("%s: failed with %s at line %i" % (os.path.basename(__file__), str(error), traceback.tb_lineno(exc_traceback)))
         for line in tbString.split('\n'):
-            print line
+            print(line)
     except NameError:
         pass
 

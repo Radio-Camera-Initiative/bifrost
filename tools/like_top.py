@@ -38,9 +38,9 @@ import socket
 import traceback
 import subprocess
 try:
-    import cStringIO as StringIO
+    import io as StringIO
 except ImportError:
-    import StringIO
+    import io
 
 os.environ['VMA_TRACELEVEL'] = '0'
 from bifrost.proclog import load_by_pid
@@ -49,13 +49,13 @@ from bifrost.proclog import load_by_pid
 BIFROST_STATS_BASE_DIR = '/dev/shm/bifrost/'
 
 def usage(exitCode=None):
-    print """%s - Display perfomance of different blocks in various bifrost processes
+    print("""%s - Display perfomance of different blocks in various bifrost processes
 
 Usage: %s [OPTIONS]
 
 Options:
 -h, --help                  Display this help information
-""" % (os.path.basename(__file__), os.path.basename(__file__))
+""" % (os.path.basename(__file__), os.path.basename(__file__)))
 
     if exitCode is not None:
         sys.exit(exitCode)
@@ -71,9 +71,9 @@ def parseOptions(args):
     # Read in and process the command line flags
     try:
         opts, args = getopt.getopt(args, "h", ["help",])
-    except getopt.GetoptError, err:
+    except getopt.GetoptError as err:
         # Print help information and exit:
-        print str(err) # will print something like "option -a not recognized"
+        print(str(err)) # will print something like "option -a not recognized"
         usage(exitCode=2)
     # Work through opts
     for opt, value in opts:
@@ -224,7 +224,7 @@ def _getGpuMemoryUsage():
         pass
     else:
         # Parse the ouptut and turn everything into something useful, if possible
-        lines = output.split('\n')[:-1]
+        lines = output.decode().split('\n')[:-1]
         for line in lines:
             used, total, free, draw, limit, load = line.split(',')
             data['devCount'] += 1
@@ -358,7 +358,7 @@ def main(args):
                     if cmd == '':
                         continue
 
-                    for block in contents.keys():
+                    for block in list(contents.keys()):
                         try:
                             log = contents[block]['bind']
                             cr = log['core0']
@@ -441,7 +441,7 @@ def main(args):
 
     except Exception as error:
         exc_type, exc_value, exc_traceback = sys.exc_info()
-        fileObject = StringIO.StringIO()
+        fileObject = io.StringIO()
         traceback.print_tb(exc_traceback, file=fileObject)
         tbString = fileObject.getvalue()
         fileObject.close()
@@ -449,8 +449,8 @@ def main(args):
     # Save the window contents
     contents = ''
     y,x = scr.getmaxyx()
-    for i in xrange(y-1):
-        for j in xrange(x):
+    for i in range(y-1):
+        for j in range(x):
             d = scr.inch(i,j)
             c = d&0xFF
             a = (d>>8)&0xFF
@@ -465,12 +465,12 @@ def main(args):
     # Final reporting
     try:
         ## Error
-        print "%s: failed with %s at line %i" % (os.path.basename(__file__), str(error), traceback.tb_lineno(exc_traceback))
+        print("%s: failed with %s at line %i" % (os.path.basename(__file__), str(error), traceback.tb_lineno(exc_traceback)))
         for line in tbString.split('\n'):
-            print line
+            print(line)
     except NameError:
         ## Last window contents sans attributes
-        print contents
+        print(contents)
 
 
 if __name__ == "__main__":

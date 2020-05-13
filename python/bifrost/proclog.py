@@ -47,7 +47,7 @@ except ImportError:
 class ProcLog(BifrostObject):
     def __init__(self, name):
         BifrostObject.__init__(
-            self, _bf.bfProcLogCreate, _bf.bfProcLogDestroy, name)
+            self, _bf.bfProcLogCreate, _bf.bfProcLogDestroy, name.encode())
     def update(self, contents):
         """Updates (replaces) the contents of the log
         contents: string or dict containing data to write to the log
@@ -57,7 +57,7 @@ class ProcLog(BifrostObject):
         if isinstance(contents, dict):
             contents = '\n'.join(['%s : %s' % item
                                   for item in list(contents.items())])
-        _check(_bf.bfProcLogUpdate(self.obj, contents))
+        _check(_bf.bfProcLogUpdate(self.obj, contents.encode()))
 
 def _multi_convert(value):
     """

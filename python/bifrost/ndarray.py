@@ -64,8 +64,12 @@ def _address_as_buffer(address, nbyte, readonly=False):
     # Note: This works as a buffer in regular python and pypy
     # Note: int_asbuffer is undocumented; see here:
     # https://mail.scipy.org/pipermail/numpy-discussion/2008-January/030938.html
-    return np.core.multiarray.int_asbuffer(
-        address, nbyte, readonly=readonly, check=False)
+    # Note: int_asbuffer doesn't exist any more (any never worked in python 3(?))
+    int_as_buffer = ctypes.pythonapi.PyMemoryView_FromMemory
+    int_as_buffer.restype = ctypes.py_object
+    int_as_buffer.argtypes = (ctypes.c_void_p, ctypes.c_int, ctypes.c_int)
+    rv = int_as_buffer(address, nbyte, readonly)
+    return rv
 
 def asarray(arr, space=None):
     if isinstance(arr, ndarray) and (space is None or space == arr.bf.space):

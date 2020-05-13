@@ -33,13 +33,13 @@ import getopt
 
 
 def usage(exitCode=None):
-    print """%s - Configure the IRQ bindings for a particular network interface
+    print("""%s - Configure the IRQ bindings for a particular network interface
 
 Usage: %s [OPTIONS] interface cpu0 [cpu1 [...]]
 
 Options:
 -h, --help             Display this help information
-""" % (os.path.basname(__file__), os.path.basename(__file__))
+""" % (os.path.basname(__file__), os.path.basename(__file__)))
 
     if exitCode is not None:
         sys.exit(exitCode)
@@ -54,9 +54,9 @@ def parseConfig(args):
     # Read in and process the command line flags
     try:
         opts, arg = getopt.getopt(args, "h", ["help",])
-    except getopt.GetoptError, err:
+    except getopt.GetoptError as err:
         # Print help information and exit:
-        print str(err) # will print something like "option -a not recognized"
+        print(str(err)) # will print something like "option -a not recognized"
         usage(exitCode=2)
 
     # Work through opts
@@ -120,13 +120,13 @@ def main(args):
             mi = procs.index(mv)
             irqs[irq] = {'cpu':mi, 'type':type, 'name':name, 'count':mv}
 
-    print "Interface: %s" % interface
-    print "%4s  %16s  %16s  %7s  %7s" % ('IRQ', 'Name', 'Type', 'Old CPU', 'New CPU')  
+    print("Interface: %s" % interface)
+    print("%4s  %16s  %16s  %7s  %7s" % ('IRQ', 'Name', 'Type', 'Old CPU', 'New CPU'))  
     for i,irq in enumerate(sorted(irqs.keys())):
         oCPU = irqs[irq]['cpu']
         nCPU = cpus[i % len(cpus)]
 
-        print "%4i  %16s  %16s  %7i  %7i" % (irq, irqs[irq]['name'], irqs[irq]['type'], oCPU, nCPU)
+        print("%4i  %16s  %16s  %7i  %7i" % (irq, irqs[irq]['name'], irqs[irq]['type'], oCPU, nCPU))
 
         mask = compute_mask(nCPU)
         write_irq_smp_affinity(irq, mask)

@@ -33,13 +33,13 @@ import getopt
 
 
 def usage(exitCode=None):
-    print """%s - List the IRQ bindings for a particular network interface
+    print("""%s - List the IRQ bindings for a particular network interface
 
 Usage: %s [OPTIONS] interface
 
 Options:
 -h, --help             Display this help information
-""" % (os.path.basname(__file__), os.path.basename(__file__))
+""" % (os.path.basname(__file__), os.path.basename(__file__)))
 
     if exitCode is not None:
         sys.exit(exitCode)
@@ -54,9 +54,9 @@ def parseConfig(args):
     # Read in and process the command line flags
     try:
         opts, arg = getopt.getopt(args, "h", ["help",])
-    except getopt.GetoptError, err:
+    except getopt.GetoptError as err:
         # Print help information and exit:
-        print str(err) # will print something like "option -a not recognized"
+        print(str(err)) # will print something like "option -a not recognized"
         usage(exitCode=2)
 
     # Work through opts
@@ -99,10 +99,10 @@ def main(args):
             irqs[irq] = {'cpu':mi, 'type':type, 'name':name, 'count':mv}
     total = sum([irqs[irq]['count'] for irq in irqs])
 
-    print "Interface: %s" % interface
-    print "%4s  %16s  %16s  %4s  %6s" % ('IRQ', 'Name', 'Type', 'CPU', 'Usage')  
+    print("Interface: %s" % interface)
+    print("%4s  %16s  %16s  %4s  %6s" % ('IRQ', 'Name', 'Type', 'CPU', 'Usage'))  
     for irq in sorted(irqs.keys()):
-        print "%4i  %16s  %16s  %4i  %5.1f%%" % (irq, irqs[irq]['name'], irqs[irq]['type'], irqs[irq]['cpu'], 100.0*irqs[irq]['count']/total)
+        print("%4i  %16s  %16s  %4i  %5.1f%%" % (irq, irqs[irq]['name'], irqs[irq]['type'], irqs[irq]['cpu'], 100.0*irqs[irq]['count']/total))
 
 
 if __name__ == "__main__":

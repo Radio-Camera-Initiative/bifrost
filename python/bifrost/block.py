@@ -38,7 +38,7 @@ if sys.version_info > (3,):
 import json
 import threading
 import time
-from contextlib import nested
+from contextlib import ExitStack
 import numpy as np
 import bifrost
 from bifrost import affinity
@@ -309,20 +309,21 @@ class MultiTransformBlock(object):
         # list of sequences
         # TODO: Change this code if someone gives a reasonable answer on
         # http://stackoverflow.com/questions/38834827/multiple-with-statements-in-python-2-7-using-a-list-comprehension
-        with nested(*[self.rings[ring_name].begin_writing()
-                      for ring_name in args]) as out_rings:
+        with ExitStack() as stack0:
+            out_rings = [stack0.enter_context(self.rings[ring_name].begin_writing())
+                      for ring_name in args]
 
             while True:
                 # resize all rings
                 for ring_name in args:
                     self.rings[ring_name].resize(self.gulp_size[ring_name])
 
-                with nested(*[out_ring.begin_sequence(
+                with ExitStack() as stack1:
+                    out_sequences = [stack1.enter_context(out_ring.begin_sequence(
                         str(int(time.time() * 1000000)),
                         int(time.time() * 1000000),
                         header=json.dumps(self.header[ring_name]),
-                        nringlet=1)
-                              for out_ring, ring_name in self.izip(out_rings, args)]) as out_sequences:
+                        nringlet=1)) for out_ring, ring_name in self.izip(out_rings, args)]
 
                     # This variable, as documented in __init__, acts as a trigger
                     # to cause a new sequence to generated. Set it to be True
@@ -333,10 +334,11 @@ class MultiTransformBlock(object):
                     # TODO: Eventually this could be used on each ring individually.
                     while not self.trigger_sequence:
 
-                        with nested(*[out_sequence.reserve(self.gulp_size[ring_name])
+                        with ExitStack() as stack2:
+                            out_spans = [stack2.enter_context(out_sequence.reserve(self.gulp_size[ring_name]))
                                       for out_sequence, ring_name in self.izip(
                                               out_sequences,
-                                              args)]) as out_spans:
+                                              args)]
 
                             dtypes = {}
                             for ring_name in args:
@@ -613,7 +615,7 @@ class SigprocReadBlock(SourceBlock):
             ohdr = {}
             ohdr['frame_shape'] = (ifile.nchans, ifile.nifs)
             ohdr['frame_size'] = ifile.nchans * ifile.nifs
-            ohdr['frame_nbyte'] = ifile.nchans * ifile.nifs * ifile.nbits / 8
+            ohdr['frame_nbyte'] = ifile.nchans * ifile.nifs * ifile.nbits // 8
             ohdr['frame_axes'] = ('pol', 'chan')
             ohdr['ringlet_shape'] = (1,)
             ohdr['ringlet_axes'] = ()
@@ -624,7 +626,7 @@ class SigprocReadBlock(SourceBlock):
             ohdr['fch1'] = float(ifile.header['fch1'])
             ohdr['foff'] = float(ifile.header['foff'])
             self.output_header = json.dumps(ohdr)
-            self.gulp_size = self.gulp_nframe * ifile.nchans * ifile.nifs * ifile.nbits / 8
+            self.gulp_size = self.gulp_nframe * ifile.nchans * ifile.nifs * ifile.nbits // 8
             out_span_generator = self.iterate_ring_write(output_ring)
             for span in out_span_generator:
                 output_size = ifile.file_object.readinto(span.data.data)
@@ -666,7 +668,7 @@ class KurtosisBlock(TransformBlock):
             # Raw data -> power array of the right type
             power = ispan.data.reshape(
                 nsample,
-                self.nchan * self.settings['nbit'] / 8).view(self.dtype)
+                self.nchan * self.settings['nbit'] // 8).view(self.dtype)
             # Following section 3.1 of the Nita paper.
             # the sample is a power value in a frequency bin from an FFT,
             # i.e. the beamformer values in a channel

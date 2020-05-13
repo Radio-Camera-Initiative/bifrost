@@ -41,7 +41,7 @@ from bifrost.proclog import load_by_pid
 BIFROST_STATS_BASE_DIR = '/dev/shm/bifrost/'
 
 def usage(exitCode=None):
-    print """%s - Create a DOT file that encapsulates the data flow inside the pipeline running
+    print("""%s - Create a DOT file that encapsulates the data flow inside the pipeline running
 under the specified PID.
 
 Usage: %s [OPTIONS] pid
@@ -50,7 +50,7 @@ Options:
 -h, --help                  Display this help information
 -s, --source-name           Name for network sources (Default = sources)
 -n, --no-associations       Exclude associated blocked (Default = include)
-""" % (os.path.basename(__file__), os.path.basename(__file__))
+""" % (os.path.basename(__file__), os.path.basename(__file__)))
 
     if exitCode is not None:
         sys.exit(exitCode)
@@ -68,9 +68,9 @@ def parseOptions(args):
     # Read in and process the command line flags
     try:
         opts, args = getopt.getopt(args, "hs:n", ["help", "source-name=", "no-associations"])
-    except getopt.GetoptError, err:
+    except getopt.GetoptError as err:
         # Print help information and exit:
-        print str(err) # will print something like "option -a not recognized"
+        print(str(err)) # will print something like "option -a not recognized"
         usage(exitCode=2)
 
     # Work through opts
@@ -158,10 +158,10 @@ def _getDataFlows(blocks):
     rings = []
     sources, sourceRings = [], []
     sinks, sinkRings = [], []
-    for block in blocks.keys():
+    for block in list(blocks.keys()):
         rins, routs = [], []
         rFound = False
-        for log in blocks[block].keys():
+        for log in list(blocks[block].keys()):
             if log not in ('in', 'out'):
                 continue
             for key in blocks[block][log]:
@@ -189,9 +189,9 @@ def _getDataFlows(blocks):
     # Find out the chains
     chains = []
     for refRing in rings:
-        for block in blocks.keys():
+        for block in list(blocks.keys()):
             rins, routs = [], []
-            for log in blocks[block].keys():
+            for log in list(blocks[block].keys()):
                 if log not in ('in', 'out'):
                     continue
                 for key in blocks[block][log]:
@@ -207,10 +207,10 @@ def _getDataFlows(blocks):
                 refBlock = block
                 refROuts = routs
 
-                for block in blocks.keys():
+                for block in list(blocks.keys()):
                     rins, routs = [], []
                     dtype = None
-                    for log in blocks[block].keys():
+                    for log in list(blocks[block].keys()):
                         if log.startswith('sequence'):
                             try:
                                 bits = blocks[block][log]['nbit']
@@ -243,7 +243,7 @@ def _getDataFlows(blocks):
     for block in blocks:
         refBlock = block
         refCores = []
-        for i in xrange(32):
+        for i in range(32):
             try:
                 refCores.append( blocks[block]['bind']['core%i' % i] )
             except KeyError:
@@ -257,7 +257,7 @@ def _getDataFlows(blocks):
                 continue
 
             cores = []
-            for i in xrange(32):
+            for i in range(32):
                 try:
                     cores.append( blocks[block]['bind']['core%i' % i] )
                 except KeyError:
@@ -304,7 +304,7 @@ def main(args):
         sources, sinks, chains, associations = _getDataFlows(contents)
 
         # Add in network sources, if needed
-        i = len(contents.keys())
+        i = len(list(contents.keys()))
         for block in sources:
             if block.startswith('udp'):
                 nsrc = None
@@ -327,10 +327,10 @@ def main(args):
         cmd = os.path.basename(cmd)
 
         # Create the DOT output
-        print "digraph graph%i {" % pid
+        print("digraph graph%i {" % pid)
         ## Graph label
-        print '  labelloc="t"'
-        print '  label="Pipeline: %s\\n "' % cmd
+        print('  labelloc="t"')
+        print('  label="Pipeline: %s\\n "' % cmd)
         ## Block identiers
         for block in sorted(lut):
             ### Is the block actually used?
@@ -369,7 +369,7 @@ def main(args):
                 if block in sinks:
                     shape = 'diamond'
                 ## Add it to the list
-                print '  %s [label="%s%s" shape="%s"]' % (lut[block], block, cpu, shape)
+                print('  %s [label="%s%s" shape="%s"]' % (lut[block], block, cpu, shape))
 
         ## Chains
         for chain in chains:
@@ -380,14 +380,14 @@ def main(args):
             else:
                 dtype = ' %s' % dtype
             ### Add it to the list
-            print '  %s -> %s [label="%s"]' % (lut[chain['link'][0]], lut[chain['link'][1]], dtype)
+            print('  %s -> %s [label="%s"]' % (lut[chain['link'][0]], lut[chain['link'][1]], dtype))
 
         ## Associations
         if config['includeAssociations']:
             for assoc0,assoc1 in associations:
-                print '  %s -> %s [style="dotted" dir="both"]' % (lut[assoc0], lut[assoc1])
+                print('  %s -> %s [style="dotted" dir="both"]' % (lut[assoc0], lut[assoc1]))
 
-        print "}"
+        print("}")
 
 
 if __name__ == "__main__":

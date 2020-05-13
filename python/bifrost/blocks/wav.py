@@ -39,10 +39,10 @@ import os
 
 def wav_read_chunk_desc(f):
     id_, size, fmt = struct.unpack('<4sI4s', f.read(12))
-    return id_, size, fmt
+    return id_.decode(), size, fmt.decode()
 def wav_read_subchunk_desc(f):
     id_, size = struct.unpack('<4sI', f.read(8))
-    return id_, size
+    return id_.decode(), size
 def wav_read_subchunk_fmt(f, size):
     assert(size >= 16)
     packed = f.read(16)

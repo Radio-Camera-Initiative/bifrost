@@ -88,7 +88,7 @@ class Ring(BifrostObject):
             Ring.instance_count += 1
         name = _slugify(name)
         BifrostObject.__init__(self, _bf.bfRingCreate, _bf.bfRingDestroy,
-                               name, _string2space(self.space))
+                               name.encode(), _string2space(self.space))
         if core is not None:
             try:
                 _check( _bf.bfRingSetAffinity(self.obj, 
@@ -105,6 +105,9 @@ class Ring(BifrostObject):
         new_ring.base = self
         return new_ring
     def resize(self, contiguous_bytes, total_bytes=None, nringlet=1):
+        contiguous_bytes = int(contiguous_bytes)
+        if total_bytes is not None:
+            total_bytes = int(total_bytes)
         _check( _bf.bfRingResize(self.obj,
                                  contiguous_bytes,
                                  total_bytes,
@@ -213,6 +216,7 @@ class SequenceBase(object):
         hdr_array = np.frombuffer(hdr_buffer, dtype=np.uint8)
         hdr_array.flags['WRITEABLE'] = False
         self._header = json.loads(hdr_array.tostring())
+        print(self._ring.name, self._header)
         return self._header
 
 class WriteSequence(SequenceBase):
@@ -234,10 +238,10 @@ class WriteSequence(SequenceBase):
         _check(_bf.bfRingSequenceBegin(
             self.obj,
             ring.obj,
-            header['name'],
+            header['name'].encode(),
             header['time_tag'],
             header_size,
-            header_str,
+            header_str.encode(),
             tensor['nringlet'],
             offset_from_head))
     def __enter__(self):

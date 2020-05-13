@@ -42,13 +42,13 @@ from bifrost.proclog import load_by_pid
 BIFROST_STATS_BASE_DIR = '/dev/shm/bifrost/'
 
 def usage(exitCode=None):
-    print """%s - Display details of running bifrost processes
+    print("""%s - Display details of running bifrost processes
 
 Usage: %s [OPTIONS]
 
 Options:
 -h, --help                  Display this help information
-""" % (os.path.basename(__file__), os.path.basename(__file__))
+""" % (os.path.basename(__file__), os.path.basename(__file__)))
 
     if exitCode is not None:
         sys.exit(exitCode)
@@ -64,9 +64,9 @@ def parseOptions(args):
     # Read in and process the command line flags
     try:
         opts, args = getopt.getopt(args, "h", ["help",])
-    except getopt.GetoptError, err:
+    except getopt.GetoptError as err:
         # Print help information and exit:
-        print str(err) # will print something like "option -a not recognized"
+        print(str(err)) # will print something like "option -a not recognized"
         usage(exitCode=2)
 
     # Work through opts
@@ -174,25 +174,25 @@ def main(args):
         if cmd == '' and details['user'] == '':
             continue
 
-        print "PID: %i" % pid
-        print "  Command: %s" % cmd
-        print "  User: %s" % details['user']
-        print "  CPU Usage: %.1f%%" % details['cpu']
-        print "  Memory Usage: %.1f%%" % details['mem']
-        print "  Elapsed Time: %s" % details['etime']
-        print "  Thread Count: %i" % details['threads']
-        print "  Rings:"
+        print("PID: %i" % pid)
+        print("  Command: %s" % cmd)
+        print("  User: %s" % details['user'])
+        print("  CPU Usage: %.1f%%" % details['cpu'])
+        print("  Memory Usage: %.1f%%" % details['mem'])
+        print("  Elapsed Time: %s" % details['etime'])
+        print("  Thread Count: %i" % details['threads'])
+        print("  Rings:")
         rings = []
         ring_details = {}
-        for block in contents.keys():
+        for block in list(contents.keys()):
             if block == 'rings':
-                for ring in contents[block].keys():
+                for ring in list(contents[block].keys()):
                     ring_details[ring] = {}
                     for key in contents[block][ring]:
                         ring_details[ring][key] = contents[block][ring][key]
                 continue
                 
-            for log in contents[block].keys():
+            for log in list(contents[block].keys()):
                 if log not in ('in', 'out'):
                     continue
                 for key in contents[block][log]:
@@ -204,16 +204,16 @@ def main(args):
             try:
                 dtls = ring_details[ring]
                 sz, un = _getBestSize(dtls['stride']*dtls['nringlet'])
-                print "    %i: %s on %s of size %.1f %s" % (i, ring, dtls['space'], sz, un)
+                print("    %i: %s on %s of size %.1f %s" % (i, ring, dtls['space'], sz, un))
             except KeyError:
-                print "    %i: %s" % (i, ring)
-        print "  Blocks:"
-        for block in contents.keys():
+                print("    %i: %s" % (i, ring))
+        print("  Blocks:")
+        for block in list(contents.keys()):
             if block == 'rings':
                 continue
                 
             rins, routs = [], []
-            for log in contents[block].keys():
+            for log in list(contents[block].keys()):
                 if log not in ('in', 'out'):
                     continue
                 for key in contents[block][log]:
@@ -225,13 +225,13 @@ def main(args):
                         else:
                             if value not in routs:
                                 routs.append( value )
-            print "    %s" % block
+            print("    %s" % block)
             if len(rins) > 0:
-                print "      -> read ring(s): %s" % (" ".join(["%i" % rings.index(v) for v in rins]),)
+                print("      -> read ring(s): %s" % (" ".join(["%i" % rings.index(v) for v in rins]),))
             if len(routs) > 0:
-                print "      -> write ring(s): %s" % (" ".join(["%i" % rings.index(v) for v in routs]),)
-            if len(contents[block].keys()) > 0:
-                print "      -> log(s): %s" % (" ".join(contents[block].keys()),)
+                print("      -> write ring(s): %s" % (" ".join(["%i" % rings.index(v) for v in routs]),))
+            if len(list(contents[block].keys())) > 0:
+                print("      -> log(s): %s" % (" ".join(list(contents[block].keys())),))
 
 
 if __name__ == "__main__":

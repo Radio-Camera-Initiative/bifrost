@@ -110,9 +110,9 @@ class BlockScope(object):
         else: thread_local.blockscope_stack.pop()
     def __getattr__(self, name):
         # Use child's value if set, othersize defer to parent
-        if not hasattr(self, '_' + name):
+        if not '_' + name in self.__dict__:
             raise AttributeError("'%s' object has no attribute '%s'" % (self.__class__, name))
-        self_value = getattr(self, '_' + name)
+        self_value = super().__getattribute__('_' + name)
         if self_value is not None:
             return self_value
         else:
