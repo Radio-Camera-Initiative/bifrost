@@ -216,7 +216,6 @@ class SequenceBase(object):
         hdr_array = np.frombuffer(hdr_buffer, dtype=np.uint8)
         hdr_array.flags['WRITEABLE'] = False
         self._header = json.loads(hdr_array.tostring())
-        print(self._ring.name, self._header)
         return self._header
 
 class WriteSequence(SequenceBase):
