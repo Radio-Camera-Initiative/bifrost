@@ -143,7 +143,7 @@ def machine2id(name):
 
 def _header_write_string(f, key):
     f.write(struct.pack('=i', len(key)))
-    f.write(key)
+    f.write(key.encode())
 def _header_write(f, key, value, fmt=None):
     if fmt is not None:
         pass
