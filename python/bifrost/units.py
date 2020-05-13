@@ -30,7 +30,6 @@ import pint
 ureg = pint.UnitRegistry()
 
 def convert_units(value, old_units, new_units):
-    print(value, old_units, '->', new_units)
     old_quantity = value * ureg.parse_expression(old_units)
     try:
         new_quantity = old_quantity.to(new_units)
