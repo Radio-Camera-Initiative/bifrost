@@ -185,7 +185,7 @@ class TransformBlock(object):
                         header=self.output_header,
                         nringlet=sequence.nringlet) as oseq:
                     for ispan in sequence.read(self.gulp_size):
-                        with oseq.reserve(ispan.size * self.out_gulp_size /
+                        with oseq.reserve(ispan.size * self.out_gulp_size //
                                           self.gulp_size) as ospan:
                             yield ispan, ospan
 
@@ -666,7 +666,7 @@ class KurtosisBlock(TransformBlock):
             output ring."""
         expected_v2 = 0.5
         for ispan, ospan in self.ring_transfer(input_rings[0], output_rings[0]):
-            nsample = ispan.size / self.nchan / (self.settings['nbit'] / 8)
+            nsample = ispan.size // self.nchan // (self.settings['nbit'] // 8)
             # Raw data -> power array of the right type
             power = ispan.data.reshape(
                 nsample,
@@ -802,7 +802,7 @@ class FoldBlock(TransformBlock):
                 histogram += np.sum(
                     sorted_data.reshape(self.bins, -1), 1).astype(np.float32)
             tstart += (self.data_settings['tsamp'] *
-                       self.gulp_size * 8 / self.data_settings['nbit'] / nchans)
+                       self.gulp_size * 8 // self.data_settings['nbit'] // nchans)
         self.out_gulp_size = self.bins * 4
         out_span_generator = self.iterate_ring_write(output_rings[0])
         out_span = next(out_span_generator)
@@ -889,7 +889,7 @@ class WaterfallBlock(object):
             waterfall_matrix = np.zeros(shape=(0, nchans))
             print(tstart, tsamp, nchans)
             for span in sequence.read(gulp_size):
-                array_size = span.data.shape[1] / nchans
+                array_size = span.data.shape[1] // nchans
                 frequency = self.header['fch1']
                 try:
                     curr_data = np.reshape(

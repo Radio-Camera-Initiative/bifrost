@@ -152,7 +152,7 @@ def split_axis(block, axis, n, label=None):
             # Axis is frame axis
             # TODO: Should assert even division here instead?
             # ***TODO: Why does pipeline deadlock when this doesn't divide?
-            hdr['gulp_nframe'] = (hdr['gulp_nframe'] - 1) / n + 1
+            hdr['gulp_nframe'] = (hdr['gulp_nframe'] - 1) // n + 1
         else:
             # Axis is not frame axis
             if shape[axis] % n:
