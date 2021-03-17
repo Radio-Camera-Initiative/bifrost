@@ -112,7 +112,7 @@ BFstatus bfXgpuKernel(BFarray *in, BFarray *out, int doDump) {
   context.array_len = info.vecLength;
   context.matrix_h = (Complex *)out->data;
   context.matrix_len = info.matLength;
-  xgpu_error = xgpuCudaXengineSwizzleKernel(&context, doDump ? SYNCOP_DUMP : 0, newAcc,
+  xgpu_error = xgpuCudaXengineSwizzleKernel(&context, SYNCOP_DUMP, newAcc,
 		                           (SwizzleInput *)in->data, (Complex *)out->data);
 
   if (newAcc) {
