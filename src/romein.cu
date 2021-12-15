@@ -263,7 +263,7 @@ inline void launch_romein_kernel(int      nbaseline,
                                  OutType* d_out,
                                  cudaStream_t stream=0) {
     //cout << "LAUNCH for " << nelement << endl;
-    dim3 block(8,1);
+    dim3 block(96,1);
     dim3 grid(nbatch*npol,1);
     if( polmajor ) {
         npol = 1;
